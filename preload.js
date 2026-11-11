@@ -11,5 +11,7 @@ contextBridge.exposeInMainWorld('glasspad', {
   setAutostart: (on) => ipcRenderer.send('autostart:set', on),
   getSleep: () => ipcRenderer.invoke('sleep:get'),
   setSleep: (on) => ipcRenderer.send('sleep:set', on),
+  getLowMem: () => ipcRenderer.invoke('lowmem:get'),
+  setLowMem: (on) => ipcRenderer.send('lowmem:set', on),
   onPanelState: (cb) => ipcRenderer.on('panel-state', (_e, expanded) => cb(expanded))
 });
