@@ -232,7 +232,29 @@ document.querySelectorAll('.seg-btn').forEach((btn) => {
 
 /* ---------- Notch & window controls ---------- */
 
-$('notch').addEventListener('click', () => window.glasspad.toggle());
+(function () {
+  const notch = $('notch');
+  let downX = 0, downY = 0, downOk = false, justToggled = false;
+  notch.addEventListener('pointerdown', (e) => {
+    downX = e.clientX;
+    downY = e.clientY;
+    downOk = true;
+  });
+  notch.addEventListener('pointerup', (e) => {
+    if (!downOk) return;
+    downOk = false;
+    const moved = Math.abs(e.clientX - downX) + Math.abs(e.clientY - downY);
+    if (moved < 6) {
+      justToggled = true;
+      window.glasspad.toggle();
+      setTimeout(() => { justToggled = false; }, 350);
+    }
+  });
+  notch.addEventListener('click', () => {
+    if (justToggled) return;
+    window.glasspad.toggle();
+  });
+})();
 $('btnClose').addEventListener('click', () => window.glasspad.collapse());
 $('btnMin').addEventListener('click', () => window.glasspad.collapse());
 
