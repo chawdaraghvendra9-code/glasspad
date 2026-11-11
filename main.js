@@ -1,17 +1,55 @@
 const { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 const PANEL_W = 400;
 const PANEL_H = 660;
 const NOTCH_W = 190;
 const NOTCH_H = 46;
 const MARGIN = 16;
+const SLEEP_MS = 3 * 60 * 1000;
 
 let win = null;
 let tray = null;
 let animTimer = null;
 let expanded = false;
-let alwaysOnTop = true;
+let pendingExpand = false;
+let sleepTimer = null;
+let config = { alwaysOnTop: true, sleepEnabled: true };
+
+function loadConfig() {
+  try {
+    const raw = fs.readFileSync(path.join(app.getPath('userData'), 'glasspad-config.json'), 'utf8');
+    const data = JSON.parse(raw);
+    if (typeof data.alwaysOnTop === 'boolean') config.alwaysOnTop = data.alwaysOnTop;
+    if (typeof data.sleepEnabled === 'boolean') config.sleepEnabled = data.sleepEnabled;
+  } catch (_) {}
+}
+
+function saveConfig() {
+  try {
+    fs.writeFileSync(
+      path.join(app.getPath('userData'), 'glasspad-config.json'),
+      JSON.stringify(config, null, 2)
+    );
+  } catch (_) {}
+}
+
+function armSleep() {
+  if (sleepTimer) clearTimeout(sleepTimer);
+  if (!config.sleepEnabled) return;
+  sleepTimer = setTimeout(() => {
+    sleepTimer = null;
+    if (win && !expanded) {
+      win.destroy();
+      win = null;
+    }
+  }, SLEEP_MS);
+}
+
+function disarmSleep() {
+  if (sleepTimer) { clearTimeout(sleepTimer); sleepTimer = null; }
+}
 
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
@@ -110,14 +148,20 @@ function buildTray() {
 }
 
 function togglePanel() {
-  if (!win) return;
+  if (!win) {
+    pendingExpand = true;
+    createWindow();
+    return;
+  }
   if (expanded) {
     expanded = false;
     const b = win.getBounds();
     animateTo(clampToWorkArea({ x: b.x + Math.floor((b.width - NOTCH_W) / 2), y: b.y, width: NOTCH_W, height: NOTCH_H }));
     win.webContents.send('panel-state', false);
+    armSleep();
   } else {
     expanded = true;
+    disarmSleep();
     const b = win.getBounds();
     animateTo(clampToWorkArea({ x: b.x + Math.floor((NOTCH_W - PANEL_W) / 2), y: b.y, width: PANEL_W, height: PANEL_H }));
     win.webContents.send('panel-state', true);
@@ -125,6 +169,7 @@ function togglePanel() {
 }
 
 function quitApp() {
+  disarmSleep();
   if (tray) { try { tray.destroy(); } catch (_) {} tray = null; }
   app.quit();
 }
@@ -149,16 +194,21 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
-      spellcheck: false
+      spellcheck: false,
+      backgroundThrottling: true
     }
   });
 
-  win.setAlwaysOnTop(true, 'screen-saver');
+  win.setAlwaysOnTop(config.alwaysOnTop, 'screen-saver');
   win.loadFile('index.html');
 
   win.once('ready-to-show', () => {
+    if (!win) return;
     win.show();
-    win.webContents.send('panel-state', false);
+    expanded = pendingExpand;
+    pendingExpand = false;
+    win.webContents.send('panel-state', expanded);
+    if (!expanded) armSleep();
   });
 
   win.on('closed', () => { win = null; });
@@ -170,11 +220,20 @@ ipcMain.on('panel:collapse', () => { if (expanded) togglePanel(); });
 ipcMain.on('panel:quit', () => quitApp());
 
 ipcMain.on('panel:set-top', (_e, on) => {
-  alwaysOnTop = !!on;
-  if (win) win.setAlwaysOnTop(alwaysOnTop, 'screen-saver');
+  config.alwaysOnTop = !!on;
+  saveConfig();
+  if (win) win.setAlwaysOnTop(config.alwaysOnTop, 'screen-saver');
 });
 
-ipcMain.handle('panel:get-state', () => ({ expanded, alwaysOnTop }));
+ipcMain.on('sleep:set', (_e, on) => {
+  config.sleepEnabled = !!on;
+  saveConfig();
+  if (!config.sleepEnabled) disarmSleep();
+  else if (win && !expanded) armSleep();
+});
+
+ipcMain.handle('panel:get-state', () => ({ expanded, alwaysOnTop: config.alwaysOnTop }));
+ipcMain.handle('sleep:get', () => config.sleepEnabled);
 
 ipcMain.handle('autostart:get', () => {
   try { return app.getLoginItemSettings().openAtLogin; } catch (_) { return false; }
@@ -192,9 +251,11 @@ ipcMain.on('autostart:set', (_e, on) => {
 
 app.on('second-instance', () => {
   if (win) { win.show(); if (!expanded) togglePanel(); }
+  else { pendingExpand = true; createWindow(); }
 });
 
 app.whenReady().then(() => {
+  loadConfig();
   createWindow();
   buildTray();
 });
