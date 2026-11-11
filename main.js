@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, screen, Tray, Menu, nativeImage, globalShortcut } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -195,7 +195,6 @@ function createWindow() {
     fullscreenable: false,
     maximizable: false,
     backgroundColor: '#00000000',
-    backgroundMaterial: 'acrylic',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -278,6 +277,13 @@ app.whenReady().then(() => {
   loadConfig();
   createWindow();
   buildTray();
+  try {
+    globalShortcut.register('Control+Alt+G', () => togglePanel());
+  } catch (_) {}
+});
+
+app.on('will-quit', () => {
+  try { globalShortcut.unregisterAll(); } catch (_) {}
 });
 
 app.on('window-all-closed', () => {
