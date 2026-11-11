@@ -296,6 +296,14 @@ $('swSleep').addEventListener('click', () => {
   window.glasspad.setSleep(on);
 });
 
+$('swLowMem').addEventListener('click', () => {
+  const sw = $('swLowMem');
+  const on = !sw.classList.contains('on');
+  sw.classList.toggle('on', on);
+  sw.setAttribute('aria-checked', String(on));
+  window.glasspad.setLowMem(on);
+});
+
 $('btnQuit').addEventListener('click', () => window.glasspad.quit());
 
 window.addEventListener('blur', () => document.body.classList.add('blurred'));
@@ -348,4 +356,9 @@ window.glasspad.getAutostart().then((on) => {
 window.glasspad.getSleep().then((on) => {
   $('swSleep').classList.toggle('on', on !== false);
   $('swSleep').setAttribute('aria-checked', String(on !== false));
+});
+
+window.glasspad.getLowMem().then((on) => {
+  $('swLowMem').classList.toggle('on', on !== false);
+  $('swLowMem').setAttribute('aria-checked', String(on !== false));
 });
