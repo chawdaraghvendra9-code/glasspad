@@ -18,8 +18,9 @@ A glassy, macOS-style **floating desktop widget** for Windows — a notepad + to
 
 1. Install [Node.js](https://nodejs.org) (LTS) if you don't have it — one time only.
 2. Double-click **`Start GlassPad.bat`**.
-   - First run installs dependencies automatically (needs internet, ~1 min).
-   - After that it opens instantly.
+   - First run downloads Electron (~100 MB) — one time only. On slow internet this can take a few minutes; the window shows progress, so leave it open.
+   - If the download gets interrupted, the launcher retries automatically — or just run it again.
+   - After that it opens in a few seconds. Use **`GlassPad.vbs`** for a silent start with no console window.
 
 To launch silently (no console flash), double-click **`GlassPad.vbs`** instead.
 
