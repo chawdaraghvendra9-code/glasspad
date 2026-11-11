@@ -7,7 +7,7 @@ const PANEL_H = 660;
 const NOTCH_W = 190;
 const NOTCH_H = 46;
 const MARGIN = 16;
-const SLEEP_MS = 3 * 60 * 1000;
+const SLEEP_MS = 45 * 1000;
 
 let win = null;
 let tray = null;
@@ -15,7 +15,7 @@ let animTimer = null;
 let expanded = false;
 let pendingExpand = false;
 let sleepTimer = null;
-let config = { alwaysOnTop: true, sleepEnabled: true };
+let config = { alwaysOnTop: true, sleepEnabled: true, lowMemory: true };
 
 function loadConfig() {
   try {
@@ -23,7 +23,13 @@ function loadConfig() {
     const data = JSON.parse(raw);
     if (typeof data.alwaysOnTop === 'boolean') config.alwaysOnTop = data.alwaysOnTop;
     if (typeof data.sleepEnabled === 'boolean') config.sleepEnabled = data.sleepEnabled;
+    if (typeof data.lowMemory === 'boolean') config.lowMemory = data.lowMemory;
   } catch (_) {}
+}
+
+loadConfig();
+if (config.lowMemory) {
+  try { app.disableHardwareAcceleration(); } catch (_) {}
 }
 
 function saveConfig() {
@@ -234,6 +240,20 @@ ipcMain.on('sleep:set', (_e, on) => {
 
 ipcMain.handle('panel:get-state', () => ({ expanded, alwaysOnTop: config.alwaysOnTop }));
 ipcMain.handle('sleep:get', () => config.sleepEnabled);
+ipcMain.handle('lowmem:get', () => config.lowMemory);
+
+ipcMain.on('lowmem:set', (_e, on) => {
+  const next = !!on;
+  if (next === config.lowMemory) return;
+  config.lowMemory = next;
+  saveConfig();
+  try {
+    app.relaunch();
+    app.exit(0);
+  } catch (_) {
+    quitApp();
+  }
+});
 
 ipcMain.handle('autostart:get', () => {
   try { return app.getLoginItemSettings().openAtLogin; } catch (_) { return false; }
