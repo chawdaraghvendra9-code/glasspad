@@ -1,0 +1,15 @@
+{
+  "name": "glasspad",
+  "productName": "GlassPad",
+  "version": "1.0.0",
+  "description": "A glassy macOS-style desktop widget: floating notepad + todo list with a notch.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "you",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^33.2.0"
+  }
+}
