@@ -9,5 +9,7 @@ contextBridge.exposeInMainWorld('glasspad', {
   getState: () => ipcRenderer.invoke('panel:get-state'),
   getAutostart: () => ipcRenderer.invoke('autostart:get'),
   setAutostart: (on) => ipcRenderer.send('autostart:set', on),
+  getSleep: () => ipcRenderer.invoke('sleep:get'),
+  setSleep: (on) => ipcRenderer.send('sleep:set', on),
   onPanelState: (cb) => ipcRenderer.on('panel-state', (_e, expanded) => cb(expanded))
 });
