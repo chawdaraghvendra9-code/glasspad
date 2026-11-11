@@ -10,6 +10,7 @@ A glassy, macOS-style **floating desktop widget** for Windows — a notepad + to
 - **To-Do** — quick tasks with glowing checkboxes, clear-done, counts.
 - **Always on top** — hovers above other windows (toggleable).
 - **Launch at startup** — enable it in Settings (⚙) and GlassPad starts with Windows.
+- **Sleep when hidden** — after 3 minutes collapsed, GlassPad drops its renderer and idles at ~50 MB RAM. Click the tray icon to wake it instantly. Toggle in Settings (⚙).
 - **Tray icon** — click to show/hide, right-click to quit.
 - Real **Windows 11 acrylic blur** behind the glass (falls back gracefully on older systems).
 
@@ -30,6 +31,12 @@ To launch silently (no console flash), double-click **`GlassPad.vbs`** instead.
 ## Keyboard
 
 - `Esc` — close settings / collapse back to the notch.
+
+## RAM usage
+
+- Open and in use: ~150–200 MB (normal for a glassy Chromium-based widget).
+- Collapsed: animations pause automatically.
+- Collapsed for 3+ minutes with **Sleep when hidden** on (default): renderer and GPU processes are dropped, idling at ~50 MB. Nothing is lost — notes are on disk, and the next click on the tray icon (or notch, if you kept it) restores the widget in about a second.
 
 ## Where is my data stored?
 
