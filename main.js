@@ -264,7 +264,7 @@ ipcMain.on('autostart:set', (_e, on) => {
     app.setLoginItemSettings({
       openAtLogin: !!on,
       path: process.execPath,
-      args: [app.getAppPath()]
+      args: app.isPackaged ? [] : [app.getAppPath()]
     });
   } catch (_) {}
 });
