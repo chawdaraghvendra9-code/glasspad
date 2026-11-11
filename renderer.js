@@ -288,7 +288,18 @@ $('swOnTop').addEventListener('click', () => {
   window.glasspad.setOnTop(on);
 });
 
+$('swSleep').addEventListener('click', () => {
+  const sw = $('swSleep');
+  const on = !sw.classList.contains('on');
+  sw.classList.toggle('on', on);
+  sw.setAttribute('aria-checked', String(on));
+  window.glasspad.setSleep(on);
+});
+
 $('btnQuit').addEventListener('click', () => window.glasspad.quit());
+
+window.addEventListener('blur', () => document.body.classList.add('blurred'));
+window.addEventListener('focus', () => document.body.classList.remove('blurred'));
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
@@ -332,4 +343,9 @@ window.glasspad.getState().then((s) => {
 window.glasspad.getAutostart().then((on) => {
   $('swStartup').classList.toggle('on', !!on);
   $('swStartup').setAttribute('aria-checked', String(!!on));
+});
+
+window.glasspad.getSleep().then((on) => {
+  $('swSleep').classList.toggle('on', on !== false);
+  $('swSleep').setAttribute('aria-checked', String(on !== false));
 });
