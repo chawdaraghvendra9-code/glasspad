@@ -34,9 +34,10 @@ To launch silently (no console flash), double-click **`GlassPad.vbs`** instead.
 
 ## RAM usage
 
-- Open and in use: ~150–200 MB (normal for a glassy Chromium-based widget).
-- Collapsed: animations pause automatically.
-- Collapsed for 3+ minutes with **Sleep when hidden** on (default): renderer and GPU processes are dropped, idling at ~50 MB. Nothing is lost — notes are on disk, and the next click on the tray icon (or notch, if you kept it) restores the widget in about a second.
+- Collapsed for 45+ seconds (Sleep mode, on by default): **~50 MB** — the renderer and GPU are fully dropped.
+- Open and in use: ~120–140 MB with **Low memory mode** on (default), which removes Chromium's GPU process entirely. If animations feel less smooth on your machine, turn it off in ⚙ Settings (the app restarts to apply).
+- While you're using another app with GlassPad open, all animations pause automatically (zero CPU/GPU).
+- This is the practical floor for a glassy HTML-rendered widget without installers or unsigned executables. A native compiled version could go lower but would trigger Windows SmartScreen warnings.
 
 ## Where is my data stored?
 
