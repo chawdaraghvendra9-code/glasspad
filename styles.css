@@ -69,12 +69,21 @@ html, body {
   border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, #b8f3ff, #38bdf8 60%, #6366f1);
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+  position: relative;
+}
+
+.notch-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgba(56, 189, 248, 1);
   animation: pulse 2.6s ease-in-out infinite;
 }
 
 @keyframes pulse {
-  0%, 100% { box-shadow: 0 0 8px rgba(56, 189, 248, 0.7); }
-  50% { box-shadow: 0 0 16px rgba(56, 189, 248, 1); }
+  0%, 100% { opacity: 0.25; transform: scale(0.8); }
+  50% { opacity: 0.9; transform: scale(1.15); }
 }
 
 .notch-label {
@@ -125,28 +134,34 @@ body:not(.collapsed) #panel {
 .aurora {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px);
-  opacity: 0.35;
+  opacity: 0.4;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 
 .a1 {
-  width: 260px;
-  height: 260px;
-  top: -80px;
-  right: -60px;
-  background: radial-gradient(circle, rgba(125, 216, 255, 0.55), transparent 70%);
+  width: 340px;
+  height: 340px;
+  top: -110px;
+  right: -90px;
+  background: radial-gradient(circle, rgba(125, 216, 255, 0.4) 0%, rgba(125, 216, 255, 0.14) 42%, transparent 68%);
   animation: drift1 14s ease-in-out infinite alternate;
 }
 
 .a2 {
-  width: 300px;
-  height: 300px;
-  bottom: -110px;
-  left: -80px;
-  background: radial-gradient(circle, rgba(201, 167, 255, 0.5), transparent 70%);
+  width: 380px;
+  height: 380px;
+  bottom: -140px;
+  left: -110px;
+  background: radial-gradient(circle, rgba(201, 167, 255, 0.36) 0%, rgba(201, 167, 255, 0.12) 42%, transparent 68%);
   animation: drift2 18s ease-in-out infinite alternate;
+}
+
+body.collapsed .aurora,
+body.blurred .aurora,
+body.blurred .notch-dot::after {
+  animation-play-state: paused;
 }
 
 @keyframes drift1 {
