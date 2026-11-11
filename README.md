@@ -12,7 +12,8 @@ A glassy, macOS-style **floating desktop widget** for Windows — a notepad + to
 - **Launch at startup** — enable it in Settings (⚙) and GlassPad starts with Windows.
 - **Sleep when hidden** — after 3 minutes collapsed, GlassPad drops its renderer and idles at ~50 MB RAM. Click the tray icon to wake it instantly. Toggle in Settings (⚙).
 - **Tray icon** — click to show/hide, right-click to quit.
-- Real **Windows 11 acrylic blur** behind the glass (falls back gracefully on older systems).
+- **Global hotkey** — `Ctrl+Alt+G` opens/closes GlassPad from anywhere.
+- Deep **glass layering** — translucent gradients, highlights and film grain for the macOS vibe.
 
 ## Run it (click and run — recommended)
 
@@ -40,6 +41,7 @@ To launch silently (no console flash), double-click **`GlassPad.vbs`** instead.
 ## Keyboard
 
 - `Esc` — close settings / collapse back to the notch.
+- `Ctrl+Alt+G` — toggle GlassPad from anywhere (works even when collapsed/asleep).
 
 ## RAM usage
 
