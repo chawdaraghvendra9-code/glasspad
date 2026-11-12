@@ -4,8 +4,9 @@ const fs = require('fs');
 
 const PANEL_W = 400;
 const PANEL_H = 660;
-const TAB_W = 36;
-const TAB_H = 160;
+const TAB_W = 44;
+const TAB_H = 210;
+const SNAP_DIST = 100;
 const SLEEP_MS = 45 * 1000;
 
 let win = null;
@@ -225,6 +226,25 @@ function createWindow() {
   });
 
   win.setAlwaysOnTop(config.alwaysOnTop, 'screen-saver');
+
+  let snapGuard = false;
+  win.on('move', () => {
+    if (snapGuard || animTimer || !win) return;
+    const b = win.getBounds();
+    const wa = screen.getPrimaryDisplay().workArea;
+    const h = expanded ? panelHeight() : tabHeight();
+    const minY = wa.y;
+    const maxY = wa.y + wa.height - h;
+    let targetY = null;
+    if (b.y - minY < SNAP_DIST) targetY = minY;
+    else if (maxY - b.y < SNAP_DIST) targetY = maxY;
+    if (targetY !== null && targetY !== b.y) {
+      snapGuard = true;
+      try { win.setBounds({ x: b.x, y: targetY, width: b.width, height: b.height }); } catch (_) {}
+      setTimeout(() => { snapGuard = false; }, 80);
+    }
+  });
+
   win.loadFile('index.html');
 
   win.once('ready-to-show', () => {
