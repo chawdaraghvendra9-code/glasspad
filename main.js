@@ -4,9 +4,8 @@ const fs = require('fs');
 
 const PANEL_W = 400;
 const PANEL_H = 660;
-const NOTCH_W = 190;
-const NOTCH_H = 46;
-const MARGIN = 16;
+const TAB_W = 36;
+const TAB_H = 160;
 const SLEEP_MS = 45 * 1000;
 
 let win = null;
@@ -72,19 +71,19 @@ function clampToWorkArea(b) {
 function notchBounds() {
   const wa = screen.getPrimaryDisplay().workArea;
   return {
-    x: wa.x + wa.width - NOTCH_W - MARGIN,
-    y: wa.y + Math.floor((wa.height - NOTCH_H) / 2),
-    width: NOTCH_W,
-    height: NOTCH_H
+    x: wa.x + wa.width - TAB_W,
+    y: wa.y + Math.floor((wa.height - TAB_H) / 2),
+    width: TAB_W,
+    height: TAB_H
   };
 }
 
 function panelBounds() {
   const wa = screen.getPrimaryDisplay().workArea;
   return {
-    x: wa.x + wa.width - PANEL_W - MARGIN,
+    x: wa.x + wa.width - PANEL_W - TAB_W,
     y: wa.y + Math.max(20, Math.floor((wa.height - PANEL_H) / 2)),
-    width: PANEL_W,
+    width: PANEL_W + TAB_W,
     height: PANEL_H
   };
 }
@@ -159,17 +158,22 @@ function togglePanel() {
     createWindow();
     return;
   }
+  const wa = screen.getPrimaryDisplay().workArea;
   if (expanded) {
     expanded = false;
     const b = win.getBounds();
-    animateTo(clampToWorkArea({ x: b.x + Math.floor((b.width - NOTCH_W) / 2), y: b.y, width: NOTCH_W, height: NOTCH_H }));
+    const target = notchBounds();
+    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - TAB_H);
+    animateTo(target);
     win.webContents.send('panel-state', false);
     armSleep();
   } else {
     expanded = true;
     disarmSleep();
     const b = win.getBounds();
-    animateTo(clampToWorkArea({ x: b.x + Math.floor((NOTCH_W - PANEL_W) / 2), y: b.y, width: PANEL_W, height: PANEL_H }));
+    const target = panelBounds();
+    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - PANEL_H);
+    animateTo(target);
     win.webContents.send('panel-state', true);
   }
 }
