@@ -4,7 +4,7 @@ A glassy, macOS-style **floating desktop widget** for Windows — a notepad + to
 
 ## Features
 
-- **Notch** — a small pill that floats on your screen. Click it to open/close GlassPad, drag it anywhere.
+- **Notch** — a sleek dark tab hugging the right edge of your screen, like a phone's notch turned sideways. Click anywhere on it to open/close GlassPad, drag it up or down to reposition it.
 - **Notes** — type anything on your mind. Everything auto-saves instantly.
 - **Pages** — create as many pages as you want (☰ button → New), switch between them any time, delete the ones you don't need.
 - **To-Do** — quick tasks with glowing checkboxes, clear-done, counts.
