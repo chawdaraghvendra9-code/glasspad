@@ -68,23 +68,35 @@ function clampToWorkArea(b) {
   return { x, y, width: b.width, height: b.height };
 }
 
+function panelHeight() {
+  const wa = screen.getPrimaryDisplay().workArea;
+  return Math.max(320, Math.min(PANEL_H, wa.height - 32));
+}
+
+function tabHeight() {
+  const wa = screen.getPrimaryDisplay().workArea;
+  return Math.max(90, Math.min(TAB_H, wa.height - 40));
+}
+
 function notchBounds() {
   const wa = screen.getPrimaryDisplay().workArea;
+  const h = tabHeight();
   return {
     x: wa.x + wa.width - TAB_W,
-    y: wa.y + Math.floor((wa.height - TAB_H) / 2),
+    y: wa.y + Math.floor((wa.height - h) / 2),
     width: TAB_W,
-    height: TAB_H
+    height: h
   };
 }
 
 function panelBounds() {
   const wa = screen.getPrimaryDisplay().workArea;
+  const h = panelHeight();
   return {
     x: wa.x + wa.width - PANEL_W - TAB_W,
-    y: wa.y + Math.max(20, Math.floor((wa.height - PANEL_H) / 2)),
+    y: wa.y + Math.max(16, Math.floor((wa.height - h) / 2)),
     width: PANEL_W + TAB_W,
-    height: PANEL_H
+    height: h
   };
 }
 
@@ -162,8 +174,10 @@ function togglePanel() {
   if (expanded) {
     expanded = false;
     const b = win.getBounds();
+    const th = tabHeight();
     const target = notchBounds();
-    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - TAB_H);
+    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - th);
+    target.height = th;
     animateTo(target);
     win.webContents.send('panel-state', false);
     armSleep();
@@ -171,8 +185,10 @@ function togglePanel() {
     expanded = true;
     disarmSleep();
     const b = win.getBounds();
+    const ph = panelHeight();
     const target = panelBounds();
-    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - PANEL_H);
+    target.y = Math.min(Math.max(b.y, wa.y), wa.y + wa.height - ph);
+    target.height = ph;
     animateTo(target);
     win.webContents.send('panel-state', true);
   }
