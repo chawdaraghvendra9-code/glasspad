@@ -15,14 +15,15 @@ A glassy, macOS-style **floating desktop widget** for Windows — a notepad + to
 - **Global hotkey** — `Ctrl+Alt+G` opens/closes GlassPad from anywhere.
 - Deep **glass layering** — translucent gradients, highlights and film grain for the macOS vibe.
 
-## Run it (click and run — recommended)
+## Run it (extract → one click — that's it)
 
 1. Click the green **Code** button → **Download ZIP** (the app is included, ~100 MB).
 2. Extract the ZIP anywhere.
-3. Double-click **`Build GlassPad.bat`** — it assembles the app in a few seconds.
-4. Double-click **`GlassPad\GlassPad.exe`**. Done — no Node.js, no installs, nothing else to download.
+3. Double-click **`RUN GLASSPAD.bat`**.
 
-Tip: right-click `GlassPad\GlassPad.exe` → **Send to → Desktop (create shortcut)**.
+First click assembles the app (~5 seconds) and opens it. Every click after that launches instantly.
+
+Tip: once assembled, right-click `GlassPad\GlassPad.exe` → **Send to → Desktop (create shortcut)**.
 
 > If Windows SmartScreen shows a blue prompt on first run, click **More info → Run anyway**. That only appears because the app isn't from the Microsoft Store — not because anything is wrong.
 
@@ -30,6 +31,8 @@ Tip: right-click `GlassPad\GlassPad.exe` → **Send to → Desktop (create short
 
 1. Install [Node.js](https://nodejs.org) (LTS).
 2. Double-click **`Start GlassPad.bat`** — first run downloads Electron automatically, then it opens instantly. Use **`GlassPad.vbs`** for a silent start.
+
+(`RUN GLASSPAD.bat` is for the portable version; source users can ignore the `app/` folder.)
 
 To launch silently (no console flash), double-click **`GlassPad.vbs`** instead.
 
